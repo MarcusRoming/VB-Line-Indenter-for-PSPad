@@ -7,13 +7,13 @@
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.00"
+Const module_ver    = "1.10"
 Const ConTabLen     = 4
 
 
 Sub VBIndent
     Dim Columns(100)
-    Dim strText, EOL, line, lines, i, intSpace, intCnt, strSpaces, intTh3nPos, strPastThen, intMsgBoxSelection, intErrCnt
+    Dim strText, EOL, line, lines, i, intSpace, intCnt, strSpaces, intThenPos, strPastThen, intMsgBoxSelection, intErrCnt, intSpaceCnt, strTestLine
     
     intMsgBoxSelection = MsgBox ("Format the code?", vbYesNo+vbQuestion, "Info:")
     intErrCnt = 0
@@ -42,54 +42,60 @@ Sub VBIndent
     For Each line in lines
         i=i+1
         line = Trim(Replace(line,vbTab,""))                         'Remove spaces and Tabs
+        strTestLine = line
+        
+        Do                                                          'Remove all unescessary spaces in test string
+            strTestLine = Replace(strTestLine,"  "," ")
+            intSpaceCnt = InStr(strTestLine,"  ")
+        Loop Until intSpaceCnt = 0
         
         ' In the following the elements that are closing a block...
-        If UCase(Left(line,7)) = "END SUB" Then
+        If UCase(Left(strTestLine,7)) = "END SUB" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,12)) = "END FUNCTION" Then
+        If UCase(Left(strTestLine,12)) = "END FUNCTION" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,12)) = "END PROPERTY" Then
+        If UCase(Left(strTestLine,12)) = "END PROPERTY" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,9)) = "END CLASS" Then
+        If UCase(Left(strTestLine,9)) = "END CLASS" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,8)) = "END WITH" Then
+        If UCase(Left(strTestLine,8)) = "END WITH" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,10)) = "END SELECT" Then
+        If UCase(Left(strTestLine,10)) = "END SELECT" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,6)) = "END IF" Then
+        If UCase(Left(strTestLine,6)) = "END IF" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,5)) = "NEXT " OR UCase(line) = "NEXT" Then
+        If UCase(Left(strTestLine,5)) = "NEXT " OR UCase(strTestLine) = "NEXT" Then
             intSpace = intSpace - ConTabLen
         End If
         
         
-        If UCase(Left(line,5)) = "LOOP " OR UCase(line) = "LOOP" Then
+        If UCase(Left(strTestLine,5)) = "LOOP " OR UCase(strTestLine) = "LOOP" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,5)) = "WEND " OR UCase(line) = "WEND" Then
+        If UCase(Left(strTestLine,5)) = "WEND " OR UCase(strTestLine) = "WEND" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,4)) = "ELSE" OR UCase(Left(line,6)) = "ELSEIF" Then
+        If UCase(Left(strTestLine,4)) = "ELSE" OR UCase(Left(strTestLine,6)) = "ELSEIF" Then
             intSpace = intSpace - ConTabLen
         End If
         
-        If UCase(Left(line,5)) = "CASE " Then
+        If UCase(Left(strTestLine,5)) = "CASE " Then
             intSpace = intSpace - ConTabLen
         End If
         
@@ -106,101 +112,105 @@ Sub VBIndent
         Next
         
         ' In the following the elements that are opening a block...
-        If UCase(Left(line,4)) = "SUB " Then
+        If UCase(Left(strTestLine,4)) = "SUB " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,6)) = "CLASS " Then
+        If UCase(Left(strTestLine,6)) = "CLASS " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,13)) = "PUBLIC CLASS " Then
+        If UCase(Left(strTestLine,13)) = "PUBLIC CLASS " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,14)) = "PRIVATE CLASS " Then
-            intSpace = intSpace + ConTabLen
-        End If        
-        
-        If UCase(Left(line,9)) = "FUNCTION " Then
+        If UCase(Left(strTestLine,14)) = "PRIVATE CLASS " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,17)) = "PRIVATE FUNCTION " Then
+        If UCase(Left(strTestLine,9)) = "FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,17)) = "PRIVATE PROPERTY " Then
+        If UCase(Left(strTestLine,17)) = "PRIVATE FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,16)) = "PUBLIC FUNCTION " Then
+        If UCase(Left(strTestLine,17)) = "PRIVATE PROPERTY " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,16)) = "PUBLIC PROPERTY " Then
+        If UCase(Left(strTestLine,16)) = "PUBLIC FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,24)) = "PUBLIC DEFAULT PROPERTY " Then
+        If UCase(Left(strTestLine,16)) = "PUBLIC PROPERTY " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,24)) = "PUBLIC DEFAULT FUNCTION " Then
+        If UCase(Left(strTestLine,24)) = "PUBLIC DEFAULT PROPERTY " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,19)) = "PUBLIC DEFAULT SUB " Then
+        If UCase(Left(strTestLine,24)) = "PUBLIC DEFAULT FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,12)) = "PRIVATE SUB " Then
+        If UCase(Left(strTestLine,19)) = "PUBLIC DEFAULT SUB " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,11)) = "PUBLIC SUB " Then
+        If UCase(Left(strTestLine,12)) = "PRIVATE SUB " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,3)) = "IF " Then
-            intTh3nPos = InStr(UCase(Trim(line))," THEN")
-            If len(Trim(line)) < intTh3nPos + 6 Then            'Test if the THEN-Command is a Single line command
-                intSpace = intSpace + ConTabLen                 'No, more than one line!
+        If UCase(Left(strTestLine,11)) = "PUBLIC SUB " Then
+            intSpace = intSpace + ConTabLen
+        End If
+        
+        If UCase(Left(strTestLine,3)) = "IF " OR UCase(Left(strTestLine,3)) = "IF(" Then
+            If Right(strTestLine,1) = "_" Then
+                intSpace = intSpace + ConTabLen
             Else
-                'Differentiate bewtween single line command and a following comment!
-                strPastThen = Trim(Right(line,len(line)- intTh3nPos -5))
-                
-                If Left(strPastThen,1) = "'" Then
-                    intSpace = intSpace + ConTabLen             'Not a single line command!
+                intThenPos = InStr(UCase(Trim(strTestLine))," THEN")
+                If len(Trim(strTestLine)) < intThenPos + 6 Then            'Test if the THEN-Command is a Single line command
+                    intSpace = intSpace + ConTabLen                 'No, more than one line!
+                Else
+                    'Differentiate bewtween single line command and a following comment!
+                    strPastThen = Trim(Right(strTestLine,len(strTestLine)- intThenPos -5))
+                    
+                    If Left(strPastThen,1) = "'" Then
+                        intSpace = intSpace + ConTabLen             'Not a single line command!
+                    End If
                 End If
             End If
         End If
         
-        If UCase(Left(line,4)) = "FOR " Then
+        If UCase(Left(strTestLine,4)) = "FOR " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,3)) = "DO " OR UCase(line) = "DO" Then
+        If UCase(Left(strTestLine,3)) = "DO " OR UCase(strTestLine) = "DO" Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,6)) = "WHILE " Then
+        If UCase(Left(strTestLine,6)) = "WHILE " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,5)) = "WITH " Then
+        If UCase(Left(strTestLine,5)) = "WITH " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,11)) = "SELECT CASE" Then
+        If UCase(Left(strTestLine,11)) = "SELECT CASE" Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,4)) = "ELSE" OR UCase(Left(line,6)) = "ELSEIF" Then
+        If UCase(Left(strTestLine,4)) = "ELSE" OR UCase(Left(strTestLine,6)) = "ELSEIF" Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(line,5)) = "CASE " Then
+        If UCase(Left(strTestLine,5)) = "CASE " Then
             intSpace = intSpace + ConTabLen
         End If
         
