@@ -1,13 +1,13 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.00
-' Date          : 30.01.15
+' Version       : 1.2
+' Date          : 02.02.15
 '*************************************************************************************
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.10"
+Const module_ver    = "1.20"
 Const ConTabLen     = 4
 
 
@@ -50,31 +50,8 @@ Sub VBIndent
         Loop Until intSpaceCnt = 0
         
         ' In the following the elements that are closing a block...
-        If UCase(Left(strTestLine,7)) = "END SUB" Then
-            intSpace = intSpace - ConTabLen
-        End If
         
-        If UCase(Left(strTestLine,12)) = "END FUNCTION" Then
-            intSpace = intSpace - ConTabLen
-        End If
-        
-        If UCase(Left(strTestLine,12)) = "END PROPERTY" Then
-            intSpace = intSpace - ConTabLen
-        End If
-        
-        If UCase(Left(strTestLine,9)) = "END CLASS" Then
-            intSpace = intSpace - ConTabLen
-        End If
-        
-        If UCase(Left(strTestLine,8)) = "END WITH" Then
-            intSpace = intSpace - ConTabLen
-        End If
-        
-        If UCase(Left(strTestLine,10)) = "END SELECT" Then
-            intSpace = intSpace - ConTabLen
-        End If
-        
-        If UCase(Left(strTestLine,6)) = "END IF" Then
+        If UCase(Left(strTestLine,4)) = "END " Then
             intSpace = intSpace - ConTabLen
         End If
         
@@ -99,7 +76,6 @@ Sub VBIndent
             intSpace = intSpace - ConTabLen
         End If
         
-        'MsgBox CStr(intSpace)
         strSpaces = ""
         If intSpace < 0 Then
             intSpace = 0
@@ -120,6 +96,14 @@ Sub VBIndent
             intSpace = intSpace + ConTabLen
         End If
         
+        If UCase(Left(strTestLine,9)) = "PROPERTY " Then
+            intSpace = intSpace + ConTabLen
+        End If
+        
+        If UCase(Left(strTestLine,9)) = "FUNCTION " Then
+            intSpace = intSpace + ConTabLen
+        End If
+        
         If UCase(Left(strTestLine,13)) = "PUBLIC CLASS " Then
             intSpace = intSpace + ConTabLen
         End If
@@ -128,19 +112,15 @@ Sub VBIndent
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(strTestLine,9)) = "FUNCTION " Then
-            intSpace = intSpace + ConTabLen
-        End If
-        
         If UCase(Left(strTestLine,17)) = "PRIVATE FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(strTestLine,17)) = "PRIVATE PROPERTY " Then
+        If UCase(Left(strTestLine,16)) = "PUBLIC FUNCTION " Then
             intSpace = intSpace + ConTabLen
         End If
         
-        If UCase(Left(strTestLine,16)) = "PUBLIC FUNCTION " Then
+        If UCase(Left(strTestLine,17)) = "PRIVATE PROPERTY " Then
             intSpace = intSpace + ConTabLen
         End If
         
@@ -167,6 +147,7 @@ Sub VBIndent
         If UCase(Left(strTestLine,11)) = "PUBLIC SUB " Then
             intSpace = intSpace + ConTabLen
         End If
+        
         
         If UCase(Left(strTestLine,3)) = "IF " OR UCase(Left(strTestLine,3)) = "IF(" Then
             If Right(strTestLine,1) = "_" Then
