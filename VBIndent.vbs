@@ -1,13 +1,13 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.2
-' Date          : 02.02.15
+' Version       : 1.3
+' Date          : 04.02.15
 '*************************************************************************************
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.20"
+Const module_ver    = "1.30"
 Const ConTabLen     = 4
 
 
@@ -236,5 +236,5 @@ Private Function handleSelText(strText)
 End Function
 
 Sub Init
-    addMenuItem "VBIndent", "Format code", "VBIndent"
+    addMenuItem "VBScriptIndent", "Format code", "VBIndent"
 End Sub
