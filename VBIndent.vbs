@@ -41,7 +41,7 @@ Sub VBIndent
     intSpace = 0
     For Each line in lines
         i=i+1
-        line = Trim(Replace(line,vbTab,""))                         'Remove spaces and Tabs
+        line = Trim(LTrimEx(line))                         'Remove spaces and Tabs
         strTestLine = line
         
         Do                                                          'Remove all unescessary spaces in test string
@@ -233,6 +233,14 @@ Private Function handleSelText(strText)
         '// Set selected text
         editor.selText strText
     End If
+End Function
+
+Function LTrimEx(str)
+    Dim re
+    Set re = New RegExp
+    re.Pattern = "^\s*"
+    re.Multiline = False
+    LTrimEx = re.Replace(str, "")
 End Function
 
 Sub Init
