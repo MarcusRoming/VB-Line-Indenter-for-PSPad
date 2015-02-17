@@ -1,14 +1,15 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.3
-' Date          : 04.02.15
+' Version       : 1.5
+' Date          : 17.02.15
 '*************************************************************************************
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.30"
+Const module_ver    = "1.50"
 Const ConTabLen     = 4
+Const ConBlnRealTab = 0                                         'If set to 1 then real tabs instead of spaces will be used! Default = 0 !
 
 
 Sub VBIndent
@@ -41,7 +42,8 @@ Sub VBIndent
     intSpace = 0
     For Each line in lines
         i=i+1
-        line = Trim(LTrimEx(line))                         'Remove spaces and Tabs
+        line = Replace(line,vbTab,"    ")                           'Replace all Tabs with four spaces
+        line = Trim(line)                                           'Trim leading and lagging spaces
         strTestLine = line
         
         Do                                                          'Remove all unescessary spaces in test string
@@ -83,9 +85,15 @@ Sub VBIndent
             MsgBox "Possible error in line " & CStr(i+1) & " : " & Chr(34) & line & Chr(34) & vbNewLine & "Counterpart of closing declaration not found!", vbExclamation, "Error:"
         End If
         
-        For intCnt = 1 To intSpace
-            strSpaces = strSpaces & " "    'Create the appropritate number of spaces to be added in front of the line!
-        Next
+        If ConBlnRealTab = 1 Then
+            For intCnt = 1 To intSpace \ ConTabLen
+                strSpaces = strSpaces & vbTab
+            Next
+        Else
+            For intCnt = 1 To intSpace
+                strSpaces = strSpaces & " "    'Create the appropritate number of spaces to be added in front of the line!
+            Next
+        End If
         
         ' In the following the elements that are opening a block...
         If UCase(Left(strTestLine,4)) = "SUB " Then
@@ -233,14 +241,6 @@ Private Function handleSelText(strText)
         '// Set selected text
         editor.selText strText
     End If
-End Function
-
-Function LTrimEx(str)
-    Dim re
-    Set re = New RegExp
-    re.Pattern = "^\s*"
-    re.Multiline = False
-    LTrimEx = re.Replace(str, "")
 End Function
 
 Sub Init
