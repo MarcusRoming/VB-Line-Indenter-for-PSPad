@@ -1,13 +1,13 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.5
-' Date          : 17.02.15
+' Version       : 1.6
+' Date          : 05.03.2015
 '*************************************************************************************
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.50"
+Const module_ver    = "1.6"
 Const ConTabLen     = 4
 Const ConBlnRealTab = 0                                         'If set to 1 then real tabs instead of spaces will be used! Default = 0 !
 
@@ -20,6 +20,8 @@ Sub VBIndent
     intErrCnt = 0
     
     If intMsgBoxSelection = vbNo Then Exit Sub
+    setWaitCursor(True)
+    
     '// Get working strText
     strText = handleSelText("")
     
@@ -209,14 +211,15 @@ Sub VBIndent
     '// Replace text
     strText = Join(lines, EOL)
     If intSpace > 0 Then
-        MsgBox "Possible error: There may be " & CInt(intSpace\4) & " unclosed blocks!", vbExclamation
-        intErrCnt = intErrCnt + 1
+        MsgBox "Possible error: There may be " & CStr(intSpace\4) & " unclosed blocks!", vbExclamation
+        intErrCnt = intErrCnt + (intSpace\4)
     End If
     
     handleSelText strText
+    setWaitCursor(False)
     
     If intErrCnt > 0 Then
-        MsgBox "Done! Detected " & CStr(intErrCnt) & " Errors", vbExclamation, "Info:"
+        MsgBox "Done! Detected " & CStr(intErrCnt) & " Error(s)", vbExclamation, "Info:"
     Else
         MsgBox "Done! Detected no errors!", vbInformation, "Info:"
     End If
