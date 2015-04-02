@@ -1,7 +1,7 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.7
+' Version       : 1.8
 ' Date          : 02.04.2015
 '*************************************************************************************
 
