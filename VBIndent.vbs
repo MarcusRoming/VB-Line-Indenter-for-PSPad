@@ -1,31 +1,39 @@
 '*************************************************************************************
 ' Simple VB-Script Code indenter, from Marcus Roming with Code from gogogadgetscott
 ' Description   : Simple code beautifier / indenter for Visual Basic Sript
-' Version       : 1.6
-' Date          : 05.03.2015
+' Version       : 1.7
+' Date          : 02.04.2015
 '*************************************************************************************
 
 Option Explicit
 Const module_name   = "VBIndent"
-Const module_ver    = "1.6"
+Const module_ver    = "1.7"
 Const ConTabLen     = 4
-Const ConBlnRealTab = 0                                         'If set to 1 then real tabs instead of spaces will be used! Default = 0 !
 
 
 Sub VBIndent
     Dim Columns(100)
-    Dim strText, EOL, line, lines, i, intSpace, intCnt, strSpaces, intThenPos, strPastThen, intMsgBoxSelection, intErrCnt, intSpaceCnt, strTestLine
+    Dim strText, EOL, line, lines, i, intSpace, intCnt, strSpaces, intThenPos, strPastThen, intMsgBoxSelection, intErrCnt, intSpaceCnt, strTestLine, blnRealTab, blnOpEx
     
-    intMsgBoxSelection = MsgBox ("Format the code?", vbYesNo+vbQuestion, "Info:")
+    intMsgBoxSelection = MsgBox ("Use spaces instead of real tabs?", vbYesNoCancel+vbQuestion, "Info:")
     intErrCnt = 0
+    blnOpEx = False
     
-    If intMsgBoxSelection = vbNo Then Exit Sub
+    If intMsgBoxSelection = vbYes Then
+        blnRealTab = False
+    ElseIf intMsgBoxSelection = vbNo Then
+        blnRealTab = True
+    Else
+        Exit Sub
+    End If
+    
     setWaitCursor(True)
+    logClear()
     
-    '// Get working strText
+    'Get working strText
     strText = handleSelText("")
     
-    '// Determine end-of-line
+    'Determine end-of-line
     EOL = ""
     If InStr(strText, Chr(13)) Then
         EOL = EOL & Chr(13)
@@ -34,14 +42,21 @@ Sub VBIndent
         EOL = EOL & Chr(10)
     End If
     
-    '// Get lines
+    'Get lines
     lines = Split(strText, EOL)
     
-    '// Initialize line index
+    'Initialize line index
     i = -1
     
-    '// Added spacing
+    'Added spacing
     intSpace = 0
+    
+    'Check if there is enough text selected!
+    If UBound(lines) < 2 Then
+         logAddLine("Warning: Only " & CStr(UBound(lines)+1) & " line(s) selected!")
+    End If     
+    
+    
     For Each line in lines
         i=i+1
         line = Replace(line,vbTab,"    ")                           'Replace all Tabs with four spaces
@@ -52,6 +67,8 @@ Sub VBIndent
             strTestLine = Replace(strTestLine,"  "," ")
             intSpaceCnt = InStr(strTestLine,"  ")
         Loop Until intSpaceCnt = 0
+        
+        If UCase(strTestLine) = "OPTION EXPLICIT" Then blnOpEx = True
         
         ' In the following the elements that are closing a block...
         
@@ -84,10 +101,10 @@ Sub VBIndent
         If intSpace < 0 Then
             intSpace = 0
             intErrCnt = intErrCnt + 1
-            MsgBox "Possible error in line " & CStr(i+1) & " : " & Chr(34) & line & Chr(34) & vbNewLine & "Counterpart of closing declaration not found!", vbExclamation, "Error:"
+            logAddLine("line " & CStr(i+1) & " - Error: Counterpart of closing declaration not found!")
         End If
         
-        If ConBlnRealTab = 1 Then
+        If blnRealTab = True Then
             For intCnt = 1 To intSpace \ ConTabLen
                 strSpaces = strSpaces & vbTab
             Next
@@ -164,7 +181,7 @@ Sub VBIndent
                 intSpace = intSpace + ConTabLen
             Else
                 intThenPos = InStr(UCase(Trim(strTestLine))," THEN")
-                If len(Trim(strTestLine)) < intThenPos + 6 Then            'Test if the THEN-Command is a Single line command
+                If len(Trim(strTestLine)) < intThenPos + 6 Then            'Test if the THEN-Command is a single line command
                     intSpace = intSpace + ConTabLen                 'No, more than one line!
                 Else
                     'Differentiate bewtween single line command and a following comment!
@@ -208,14 +225,19 @@ Sub VBIndent
         lines(i) = strSpaces & line
     Next
     
-    '// Replace text
+    'Replace text
     strText = Join(lines, EOL)
     If intSpace > 0 Then
-        MsgBox "Possible error: There may be " & CStr(intSpace\4) & " unclosed blocks!", vbExclamation
+        logAddLine("Possible error: There may be " & CStr(intSpace\4) & " unclosed blocks!")
         intErrCnt = intErrCnt + (intSpace\4)
     End If
     
     handleSelText strText
+    
+    If blnOpEx = False Then
+        'logAddLine("Warning: ""Option Explicit"" not used!")
+    End If
+    
     setWaitCursor(False)
     
     If intErrCnt > 0 Then
@@ -226,22 +248,22 @@ Sub VBIndent
     
 End Sub
 
-'// @param string Text to replace selected text
+'@param string Text to replace selected text
 Private Function handleSelText(strText)
     Dim editor
     On Error Resume Next
     Set editor = newEditor()
     editor.assignActiveEditor
     If strText = "" Then
-        '// Get selected text
+        'Get selected text
         handleSelText = editor.selText
         If handleSelText = "" Then
-            '// No text was select. Get all text and select it.
+            'No text was select. Get all text and select it.
             handleSelText  = editor.Text
             editor.command "ecSelectAll"
         End If
     Else
-        '// Set selected text
+        'Set selected text
         editor.selText strText
     End If
 End Function
@@ -249,3 +271,4 @@ End Function
 Sub Init
     addMenuItem "VBScriptIndent", "Format code", "VBIndent"
 End Sub
+

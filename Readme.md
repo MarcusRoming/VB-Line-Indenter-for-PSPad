@@ -17,4 +17,9 @@ Known Issues:
 
 Use at your own risk!
 
+New:
+- Now asks if real tabs or spaces should be used.
+- Corrected error counting.
+- Most errors are now send to the log window instead of MsgBox.
+
 https://github.com/MarcusRoming
