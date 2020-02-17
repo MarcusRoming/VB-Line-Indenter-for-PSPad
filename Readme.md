@@ -6,8 +6,6 @@ Very simple VB-Script code beautifier for PSPad: http://www.pspad.com/ Using som
 Installation: Copy into the PSPad installation path into the folder "\Script\VBScript\". Only copy the "VBIndent.vbs" script file! 
 The function can then be found via the Script-menu: "Script/Format code/VBScriptIndent". If not available activate WSH Scripting in the PSPad settings.
 
----> If you want to have real tabs instead of spaces then change the value of ConBlnRealTab in the script to 1 !
-
 Known Issues:
 - Cannot handle ")Then" or ""Then" in "If Then"-insctructions. A space character before the "Then" is always needed! 
 - Sometimes still problems with multi-line commands.
